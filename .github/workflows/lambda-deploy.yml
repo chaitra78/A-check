@@ -1,0 +1,33 @@
+name: Deploy Lambda with ECR Image
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Image to ECR"]
+    types:
+      - completed
+
+jobs:
+  update-lambda:
+    runs-on: ubuntu-latest
+
+    env:
+      FUNCTION_NAME: my-app
+      ECR_REPO: my-microservice
+      AWS_REGION: ap-south-1
+
+    steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Update Lambda to use latest image
+      run: |
+        ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+        IMAGE_URI="$ACCOUNT_ID.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:latest"
+
+        aws lambda update-function-code \
+          --function-name $FUNCTION_NAME \
+          --image-uri $IMAGE_URI

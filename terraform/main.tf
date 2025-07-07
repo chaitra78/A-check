@@ -8,7 +8,7 @@ resource "aws_lambda_function" "appointment-service" {
   source_code_hash = filebase64sha256("${path.module}/appointment-service.zip")
   handler       = "index.handler"
   runtime       = "nodejs18.x"
-  role          = devops-role
+  role          = devops-user
 }
 
 

@@ -1,7 +1,11 @@
 name: Build and Push Docker Image to ECR
 
 on:
-  push:
+workflow_run:
+ workflows: ["Terraform CI/CD"]
+ types:
+ - completed
+ 
     paths:
       - 'Dockerfile'
       - 'app/**'

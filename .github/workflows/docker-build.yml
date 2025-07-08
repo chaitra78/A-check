@@ -2,7 +2,7 @@ name: Build and Push Docker Image to ECR
 
 on:
  workflow_run:
- workflows: ["terraform ci-cd"]
+ workflows: ["terraform-ci-cd"]
  types:
  - completed
  
